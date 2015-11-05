@@ -118,4 +118,81 @@ public class AndroidCursor implements DatabaseCursor {
 	public void setNativeCursor (Cursor cursorRef) {
 		cursor = cursorRef;
 	}
+
+	@Override
+	public byte[] getBlob (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getBlob(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the blob", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public double getDouble (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getDouble(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the double", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public float getFloat (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getFloat(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the float", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public int getInt (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getInt(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the int", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public long getLong (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getLong(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the long", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public short getShort (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getShort(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the short", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
+
+	@Override
+	public String getString (String columnName) {
+		try {
+			int columnIndex = cursor.getColumnIndex(columnName);
+			return cursor.getString(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in getting the string", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+	}
 }

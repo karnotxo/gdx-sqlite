@@ -1,6 +1,6 @@
 # gdx-sqlite
 
-*Note: This project is no more actively maintained. Please check out the various forks [here](https://github.com/mrafayaleem/gdx-sqlite/network) to follow up with active developments around this repository.*
+This is a fork of https://github.com/mrafayaleem/gdx-sqlite project.
 
 gdx-sqlite is a cross-platform Libgdx extension for SQLite database handling. The extension abstracts databse handling to provide a unified method to handle database transacitons across multiple platforms while also adding SQLite support for desktop version of Libgdx application.
 
@@ -39,6 +39,10 @@ Note: This setup assumes that you have properly setup your project as follows (o
 	<pattern>com.badlogic.gdx.sqlite.robovm.RobovmDatabaseManager</pattern>
 	<pattern>SQLite.**</pattern>
 ```
+
+## Extensions done to original project
+- com.badlogic.gdx.sql.DatabaseCursor interface now has methods to get a value from database given a column name.
+- Updated DatabaseCursor implementations in Desktop, Android and Robovm implementations.
 
 ## Example Code:
 ```java

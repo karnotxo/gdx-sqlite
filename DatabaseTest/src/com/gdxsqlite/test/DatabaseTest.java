@@ -87,7 +87,7 @@ public class DatabaseTest extends Game {
 				}
 
 				while (cursor.next()) {
-					statusLabel.setText(String.valueOf(cursor.getInt(0)));
+					statusLabel.setText(cursor.getString("comment"));
 				}
 
 				try {

@@ -108,4 +108,63 @@ public class RobovmCursor implements DatabaseCursor {
 		this.nativeCursor = resultSet;
 	}
 
+	@Override
+	public byte[] getBlob(String columnName) {
+		return nativeCursor.getBlob(columnName);
+	}
+
+	@Override
+	public double getDouble(String columnName) {
+		try {
+			return nativeCursor.getDouble(columnName);
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+
+	@Override
+	public float getFloat(String columnName) {
+		try {
+			return nativeCursor.getFloat(columnName);
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getInt(String columnName) {
+		try {
+			return nativeCursor.getInt(columnName);
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+
+	@Override
+	public long getLong(String columnName) {
+		try {
+			return nativeCursor.getLong(columnName);
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+
+	@Override
+	public short getShort(String columnName) {
+		try {
+			return nativeCursor.getShort(columnName);
+		} catch (SQLException e) {
+			return -1;
+		}
+	}
+
+	@Override
+	public String getString(String columnName) {
+		try {
+			return nativeCursor.getString(columnName);
+		} catch (SQLException e) {
+			return "";
+		}
+	}
+
 }
