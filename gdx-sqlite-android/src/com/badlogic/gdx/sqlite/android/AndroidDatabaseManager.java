@@ -94,6 +94,21 @@ public class AndroidDatabaseManager implements DatabaseManager {
 			}
 		}
 
+		@Override
+		public void beginTransaction () {
+			database.beginTransaction();
+		}
+
+		@Override
+		public void setTransactionSuccessful () {
+			database.setTransactionSuccessful();
+		}
+
+		@Override
+		public void endTransaction () {
+			database.endTransaction();
+		}
+
 	}
 
 	public AndroidDatabaseManager () {

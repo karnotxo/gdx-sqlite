@@ -49,4 +49,11 @@ public interface Database {
 	 * @throws SQLiteGdxException */
 	public DatabaseCursor rawQuery (DatabaseCursor cursor, String sql) throws SQLiteGdxException;
 
+	
+	/**
+	 * transaction related methods
+	 */
+	public void beginTransaction();
+	public void setTransactionSuccessful();
+	public void endTransaction();
 }

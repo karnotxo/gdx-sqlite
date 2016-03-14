@@ -104,6 +104,34 @@ public class DesktopDatabaseManager implements DatabaseManager {
 			}
 		}
 
+		@Override
+		public void beginTransaction () {
+			try {
+				connection.setAutoCommit(false);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void setTransactionSuccessful () {
+			try {
+				connection.commit();
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void endTransaction () {
+			try {
+				connection.rollback();
+				connection.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override

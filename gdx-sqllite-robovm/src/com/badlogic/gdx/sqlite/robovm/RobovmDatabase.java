@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import SQLite.JDBCDriver;
 
 import com.badlogic.gdx.sql.Database;
@@ -101,6 +102,35 @@ public class RobovmDatabase implements Database {
 			return cursor;
 		} catch (SQLException e) {
 			throw new SQLiteGdxException(e);
+		}
+	}
+
+	@Override
+	public void beginTransaction() {
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void setTransactionSuccessful() {
+		try {
+			connection.commit();
+			connection.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void endTransaction() {
+		try {
+			connection.rollback();
+			connection.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
