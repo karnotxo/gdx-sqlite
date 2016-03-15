@@ -2,6 +2,7 @@ package com.badlogic.gdx.sqlite.robovm;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -134,4 +135,31 @@ public class RobovmDatabase implements Database {
 		}
 	}
 
+	@Override
+	public void execSQL (String sql, String[] params) throws SQLiteGdxException {
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			for (int i = 0; i < params.length; i++) {
+				pstmt.setString(i+1, params[i]);
+			}
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new SQLiteGdxException(e);
+		}
+	}
+
+	@Override
+	public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(sql);
+			for (int i = 0; i < params.length; i++) {
+				pstmt.setString(i+1, params[i]);
+			}
+			ResultSet resultSetRef = pstmt.executeQuery();
+			RobovmCursor lCursor = new RobovmCursor(resultSetRef);
+			return lCursor;
+		} catch (SQLException e) {
+			throw new SQLiteGdxException(e);
+		}
+	}
 }

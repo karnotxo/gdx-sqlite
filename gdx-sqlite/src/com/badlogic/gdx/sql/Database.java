@@ -32,12 +32,14 @@ public interface Database {
 	 * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are not supported.
 	 * @throws SQLiteGdxException */
 	public void execSQL (String sql) throws SQLiteGdxException;
+	public void execSQL (String sql, String[] params) throws SQLiteGdxException;
 
 	/** Runs the provided SQL and returns a {@link DatabaseCursor} over the result set.
 	 * @param sql the SQL query. The SQL string must not be ; terminated
 	 * @return {@link DatabaseCursor}
 	 * @throws SQLiteGdxException */
 	public DatabaseCursor rawQuery (String sql) throws SQLiteGdxException;
+	public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException;
 
 	/** Runs the provided SQL and returns the same {@link DatabaseCursor} that was passed to this method. Use this method when you
 	 * want to avoid reallocation of {@link DatabaseCursor} object. Note that you shall only pass the {@link DatabaseCursor} object

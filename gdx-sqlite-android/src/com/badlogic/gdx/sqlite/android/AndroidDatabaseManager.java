@@ -109,6 +109,18 @@ public class AndroidDatabaseManager implements DatabaseManager {
 			database.endTransaction();
 		}
 
+		@Override
+		public void execSQL (String sql, String[] params) throws SQLiteGdxException {
+			database.execSQL(sql, params);
+		}
+
+		@Override
+		public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
+			AndroidCursor aCursor = new AndroidCursor();
+			Cursor cursor = database.rawQuery(sql, params);
+			aCursor.setNativeCursor(cursor);
+			return aCursor;
+		}
 	}
 
 	public AndroidDatabaseManager () {

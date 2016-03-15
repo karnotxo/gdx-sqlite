@@ -3,6 +3,7 @@ package com.badlogic.gdx.sqlite.desktop;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,6 +30,7 @@ public class DesktopDatabaseManager implements DatabaseManager {
 
 		private Connection connection = null;
 		private Statement stmt = null;
+		private PreparedStatement pstmt = null;
 
 		private DesktopDatabase (String dbName, int dbVersion, String dbOnCreateQuery, String dbOnUpgradeQuery) {
 			this.dbName = dbName;
@@ -65,6 +67,7 @@ public class DesktopDatabaseManager implements DatabaseManager {
 		public void closeDatabase () throws SQLiteGdxException {
 			try {
 				stmt.close();
+				pstmt.close();
 				connection.close();
 			} catch (SQLException e) {
 				throw new SQLiteGdxException(e);
@@ -130,6 +133,35 @@ public class DesktopDatabaseManager implements DatabaseManager {
 				connection.setAutoCommit(true);
 			} catch (SQLException e) {
 				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void execSQL (String sql, String[] params) throws SQLiteGdxException {
+			try {
+				pstmt = connection.prepareStatement(sql);
+				for (int i = 0; i < params.length; i++) {
+					pstmt.setString(i+1, params[i]);
+				}
+				pstmt.executeUpdate();
+			} catch (SQLException e) {
+				throw new SQLiteGdxException(e);
+			}
+		}
+
+		@Override
+		public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
+			DesktopCursor lCursor = new DesktopCursor();
+			try {
+				pstmt = connection.prepareStatement(sql);
+				for (int i = 0; i < params.length; i++) {
+					pstmt.setString(i+1, params[i]);
+				}
+				ResultSet resultSetRef = pstmt.executeQuery();
+				lCursor.setNativeCursor(resultSetRef);
+				return lCursor;
+			} catch (SQLException e) {
+				throw new SQLiteGdxException(e);
 			}
 		}
 	}
