@@ -3,7 +3,6 @@ package com.badlogic.gdx.sqlite.desktop;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -30,7 +29,6 @@ public class DesktopDatabaseManager implements DatabaseManager {
 
 		private Connection connection = null;
 		private Statement stmt = null;
-		private PreparedStatement pstmt = null;
 
 		private DesktopDatabase (String dbName, int dbVersion, String dbOnCreateQuery, String dbOnUpgradeQuery) {
 			this.dbName = dbName;
@@ -57,6 +55,7 @@ public class DesktopDatabaseManager implements DatabaseManager {
 			try {
 				connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
 				stmt = connection.createStatement();
+				stmt.setQueryTimeout(30);
 				helper.onCreate(stmt);
 			} catch (SQLException e) {
 				throw new SQLiteGdxException(e);
@@ -66,9 +65,12 @@ public class DesktopDatabaseManager implements DatabaseManager {
 		@Override
 		public void closeDatabase () throws SQLiteGdxException {
 			try {
-				stmt.close();
-				pstmt.close();
-				connection.close();
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
 			} catch (SQLException e) {
 				throw new SQLiteGdxException(e);
 			}
@@ -108,67 +110,57 @@ public class DesktopDatabaseManager implements DatabaseManager {
 		}
 
 		@Override
-		public void beginTransaction () {
+		public PreparedStatement getPreparedStatement (String query) throws SQLiteGdxException {
 			try {
-				connection.setAutoCommit(false);
+				java.sql.PreparedStatement _statement = connection.prepareStatement(query);
+				_statement.setQueryTimeout(3);
+				return new PreparedStatement(_statement);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				throw new SQLiteGdxException("There was an error in getting the prepared statement for query : " + query, e);
+			}
+		}
+		
+		@Override
+		public void beginTransaction () throws SQLiteGdxException {
+			try {
+			    connection.setAutoCommit(false);
+			} catch (SQLException e) {
+			    throw new SQLiteGdxException("Error when begining transaction", e);
 			}
 		}
 
 		@Override
-		public void setTransactionSuccessful () {
+		public void setTransactionSuccessful () throws SQLiteGdxException {
 			try {
-				connection.commit();
-				connection.setAutoCommit(true);
+			    connection.commit();
 			} catch (SQLException e) {
-				e.printStackTrace();
+			    throw new SQLiteGdxException("Can't commit batch to database", e);
 			}
 		}
 
 		@Override
-		public void endTransaction () {
+		public void endTransaction () throws SQLiteGdxException {
 			try {
-				connection.rollback();
-				connection.setAutoCommit(true);
+			    connection.setAutoCommit(false);
 			} catch (SQLException e) {
-				e.printStackTrace();
+			    throw new SQLiteGdxException("Error when ending transaction", e);
 			}
 		}
 
 		@Override
-		public void execSQL (String sql, String[] params) throws SQLiteGdxException {
+		public long getLastRowId () throws SQLiteGdxException {
 			try {
-				pstmt = connection.prepareStatement(sql);
-				for (int i = 0; i < params.length; i++) {
-					pstmt.setString(i+1, params[i]);
-				}
-				pstmt.executeUpdate();
+				return stmt.getGeneratedKeys().getLong(1);
 			} catch (SQLException e) {
-				throw new SQLiteGdxException(e);
+				throw new SQLiteGdxException("There was an error in getting the last generated id", e);
 			}
 		}
 
-		@Override
-		public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
-			DesktopCursor lCursor = new DesktopCursor();
-			try {
-				pstmt = connection.prepareStatement(sql);
-				for (int i = 0; i < params.length; i++) {
-					pstmt.setString(i+1, params[i]);
-				}
-				ResultSet resultSetRef = pstmt.executeQuery();
-				lCursor.setNativeCursor(resultSetRef);
-				return lCursor;
-			} catch (SQLException e) {
-				throw new SQLiteGdxException(e);
-			}
-		}
+
 	}
 
 	@Override
 	public Database getNewDatabase (String dbName, int dbVersion, String dbOnCreateQuery, String dbOnUpgradeQuery) {
 		return new DesktopDatabase(dbName, dbVersion, dbOnCreateQuery, dbOnUpgradeQuery);
 	}
-
 }

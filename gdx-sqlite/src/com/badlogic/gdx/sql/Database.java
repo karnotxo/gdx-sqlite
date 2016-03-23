@@ -1,6 +1,7 @@
 
 package com.badlogic.gdx.sql;
 
+
 /** This public interface contains the necessary methods to setup and execute queries on a database. The factory method
  * {@link DatabaseFactory#getNewDatabase(String, int, String, String)} will return a database object that implements this
  * interface. The typical sequence of method calls should be as follows:
@@ -27,19 +28,33 @@ public interface Database {
 	/** Closes the opened database and releases all the resources related to this database.
 	 * @throws SQLiteGdxException */
 	public void closeDatabase () throws SQLiteGdxException;
+	
+   /**
+    * Get a prepared statement.
+    * 
+    * @param prepStat give the {@link PreparedStatement prepared statement} to use
+    * @param query the query to prepare
+    * @return the prepared statement of the query
+    * @throws SQLiteGdxRuntimeException
+    */
+   public PreparedStatement getPreparedStatement(String query) throws SQLiteGdxException;
+
+   public void beginTransaction() throws SQLiteGdxException;
+   
+   public void setTransactionSuccessful() throws SQLiteGdxException;
+
+   public void endTransaction() throws SQLiteGdxException;
 
 	/** Execute a single SQL statement that is NOT a SELECT or any other SQL statement that returns data.
 	 * @param sql the SQL statement to be executed. Multiple statements separated by semicolons are not supported.
 	 * @throws SQLiteGdxException */
 	public void execSQL (String sql) throws SQLiteGdxException;
-	public void execSQL (String sql, String[] params) throws SQLiteGdxException;
 
 	/** Runs the provided SQL and returns a {@link DatabaseCursor} over the result set.
 	 * @param sql the SQL query. The SQL string must not be ; terminated
 	 * @return {@link DatabaseCursor}
 	 * @throws SQLiteGdxException */
 	public DatabaseCursor rawQuery (String sql) throws SQLiteGdxException;
-	public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException;
 
 	/** Runs the provided SQL and returns the same {@link DatabaseCursor} that was passed to this method. Use this method when you
 	 * want to avoid reallocation of {@link DatabaseCursor} object. Note that you shall only pass the {@link DatabaseCursor} object
@@ -50,12 +65,11 @@ public interface Database {
 	 * @return the passed {@link DatabaseCursor}.
 	 * @throws SQLiteGdxException */
 	public DatabaseCursor rawQuery (DatabaseCursor cursor, String sql) throws SQLiteGdxException;
-
 	
-	/**
-	 * transaction related methods
-	 */
-	public void beginTransaction();
-	public void setTransactionSuccessful();
-	public void endTransaction();
+   /**
+    * Return the last insert query generated id.
+    * 
+    * @return the last generated id
+    */
+   public long getLastRowId() throws SQLiteGdxException;
 }

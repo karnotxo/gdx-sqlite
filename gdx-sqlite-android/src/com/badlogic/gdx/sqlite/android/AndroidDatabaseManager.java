@@ -12,6 +12,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.sql.Database;
 import com.badlogic.gdx.sql.DatabaseCursor;
 import com.badlogic.gdx.sql.DatabaseManager;
+import com.badlogic.gdx.sql.PreparedStatement;
 import com.badlogic.gdx.sql.SQLiteGdxException;
 
 /** @author M Rafay Aleem */
@@ -110,16 +111,25 @@ public class AndroidDatabaseManager implements DatabaseManager {
 		}
 
 		@Override
-		public void execSQL (String sql, String[] params) throws SQLiteGdxException {
-			database.execSQL(sql, params);
+		public long getLastRowId () throws SQLiteGdxException {
+			try {
+				return rawQuery("SELECT last_insert_rowid();").getLong(0);
+			} catch (SQLiteException e) {
+				throw new SQLiteGdxException("There was an error in getting the last generated id", e);
+			}
 		}
 
 		@Override
-		public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
-			AndroidCursor aCursor = new AndroidCursor();
-			Cursor cursor = database.rawQuery(sql, params);
-			aCursor.setNativeCursor(cursor);
-			return aCursor;
+		public PreparedStatement getPreparedStatement (String sql) throws SQLiteGdxException {
+//			return new PreparedStatement(sql, this);
+			return null;
+		}
+
+		/**
+		 * @return the database
+		 */
+		public SQLiteDatabase getDatabase () {
+			return database;
 		}
 	}
 

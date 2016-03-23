@@ -119,7 +119,7 @@ public class RobovmDatabase implements Database {
 	public void setTransactionSuccessful() {
 		try {
 			connection.commit();
-			connection.setAutoCommit(true);
+//			connection.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -129,37 +129,21 @@ public class RobovmDatabase implements Database {
 	public void endTransaction() {
 		try {
 			connection.rollback();
-			connection.setAutoCommit(true);
+//			connection.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void execSQL (String sql, String[] params) throws SQLiteGdxException {
-		try {
-			PreparedStatement pstmt = connection.prepareStatement(sql);
-			for (int i = 0; i < params.length; i++) {
-				pstmt.setString(i+1, params[i]);
-			}
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new SQLiteGdxException(e);
-		}
+	public com.badlogic.gdx.sql.PreparedStatement getPreparedStatement(String query) throws SQLiteGdxException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public DatabaseCursor rawQuery (String sql, String[] params) throws SQLiteGdxException {
-		try {
-			PreparedStatement pstmt = connection.prepareStatement(sql);
-			for (int i = 0; i < params.length; i++) {
-				pstmt.setString(i+1, params[i]);
-			}
-			ResultSet resultSetRef = pstmt.executeQuery();
-			RobovmCursor lCursor = new RobovmCursor(resultSetRef);
-			return lCursor;
-		} catch (SQLException e) {
-			throw new SQLiteGdxException(e);
-		}
+	public long getLastRowId() throws SQLiteGdxException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
