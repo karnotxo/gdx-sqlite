@@ -25,6 +25,18 @@ public class AndroidCursor implements DatabaseCursor {
 	}
 
 	@Override
+	public void reposition(int columnIndex) {
+
+		try {
+			cursor.moveToPosition(columnIndex);
+		} catch (SQLiteException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error repositioning the cursor", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+
+	}
+
+	@Override
 	public double getDouble (int columnIndex) {
 		try {
 			return cursor.getDouble(columnIndex);

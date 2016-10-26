@@ -35,6 +35,18 @@ public class DesktopCursor implements DatabaseCursor {
 	}
 
 	@Override
+	public void reposition(int columnIndex) {
+
+		try {
+			resultSet.absolute(columnIndex);
+		} catch (SQLException e) {
+			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error in repositioning", e);
+			throw new SQLiteGdxRuntimeException(e);
+		}
+
+	}
+
+	@Override
 	public double getDouble (int columnIndex) {
 		try {
 			return resultSet.getDouble(columnIndex + 1);
@@ -123,29 +135,29 @@ public class DesktopCursor implements DatabaseCursor {
 
 	private int getRowCount (ResultSet resultSet) {
 
-	
+
 		if (resultSet == null) {
 			return 0;
 		}
 
-		try { 
-			
+		try {
+
 			resultSet.last();
-		
+
 			return resultSet.getRow();
-		
+
 		} catch (SQLException e) {
 			Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error counting the number of results", e);
 			throw new SQLiteGdxRuntimeException(e);
 		} finally {
-			
-		try {
-	
-			
-			resultSet.beforeFirst();
 
-			
-			 
+			try {
+
+
+				resultSet.beforeFirst();
+
+
+
 			} catch (SQLException e) {
 				Gdx.app.log(DatabaseFactory.ERROR_TAG, "There was an error counting the number of results", e);
 			}
@@ -160,7 +172,7 @@ public class DesktopCursor implements DatabaseCursor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	@Override

@@ -13,11 +13,11 @@ public interface DatabaseCursor {
 	 * @return the value of that column as a byte array. */
 	public byte[] getBlob (int columnIndex);
 
-    /**
-     * Returns the value of the requested column as a byte array.
-     * @param columnName name of column in database
-     * @return the value of that column as a byte array.
-     */
+	/**
+	 * Returns the value of the requested column as a byte array.
+	 * @param columnName name of column in database
+	 * @return the value of that column as a byte array.
+	 */
 	public byte[] getBlob (String columnName);
 
 	/** Returns the value of the requested column as a double.
@@ -45,26 +45,26 @@ public interface DatabaseCursor {
 	 * @return the value of that column as a int. */
 	public int getInt (int columnIndex);
 
-    /** Returns the value of the requested column as a int.
-     * @param columnName name of column in database
-     * @return the value of that column as a int. */
-    public int getInt (String columnName);
+	/** Returns the value of the requested column as a int.
+	 * @param columnName name of column in database
+	 * @return the value of that column as a int. */
+	public int getInt (String columnName);
 
 	/** Returns the value of the requested column as a long.
 	 * @param columnIndex the zero-based index of the target column.
 	 * @return the value of that column as a long. */
 	public long getLong (int columnIndex);
 
-    /** Returns the value of the requested column as a long.
-     * @param columnName name of column in database
-     * @return the value of that column as a long. */
-    public long getLong (String columnName);
+	/** Returns the value of the requested column as a long.
+	 * @param columnName name of column in database
+	 * @return the value of that column as a long. */
+	public long getLong (String columnName);
 
 	/** Returns the value of the requested column as a short.
 	 * @param columnIndex the zero-based index of the target column.
 	 * @return the value of that column as a short. */
 	public short getShort (int columnIndex);
-	
+
 	/** Returns the value of the requested column as a short.
 	 * @param columnName name of column in database
 	 * @return the value of that column as a short. */
@@ -74,7 +74,7 @@ public interface DatabaseCursor {
 	 * @param columnIndex the zero-based index of the target column.
 	 * @return the value of that column as a string. */
 	public String getString (int columnIndex);
-	
+
 	/** Returns the value of the requested column as a string.
 	 * @param columnName name of column in database
 	 * @return the value of that column as a string. */
@@ -91,5 +91,8 @@ public interface DatabaseCursor {
 
 	/** Closes the Cursor, releasing all of its resources and making it completely invalid. */
 	public void close ();
+
+	/** Repositions the cursor to the index provided */
+	public void reposition (int columnIndex);
 
 }
