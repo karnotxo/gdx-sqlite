@@ -4,7 +4,7 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.badlogic.gdx.sql.DatabaseCursor;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
 /**
  * 
  * @author truongps

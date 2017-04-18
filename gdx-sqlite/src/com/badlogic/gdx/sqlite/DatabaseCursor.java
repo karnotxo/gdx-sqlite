@@ -1,5 +1,5 @@
 
-package com.badlogic.gdx.sql;
+package com.badlogic.gdx.sqlite;
 
 /**
  *  This public interface contains all the methods to expose results from a query on a SQLiteDatabase. This is not thread-safe.

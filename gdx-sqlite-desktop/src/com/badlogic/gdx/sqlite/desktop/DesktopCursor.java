@@ -5,12 +5,11 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.sun.rowset.CachedRowSetImpl;
-import javax.sql.rowset.CachedRowSet;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.sql.DatabaseCursor;
-import com.badlogic.gdx.sql.DatabaseFactory;
-import com.badlogic.gdx.sql.SQLiteGdxRuntimeException;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
+import com.badlogic.gdx.sqlite.DatabaseFactory;
+import com.badlogic.gdx.sqlite.SQLiteGdxRuntimeException;
 
 /** This is a Desktop implementation of the public interface {@link DatabaseCursor}. Note that columns in JDBC are not zero-based
  * and hence +1 has been added to accomodate for this difference.

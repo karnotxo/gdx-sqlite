@@ -9,11 +9,11 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.badlogic.gdx.sql.DatabaseCursor;
-import com.badlogic.gdx.sql.SQLiteGdxException;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
+import com.badlogic.gdx.sqlite.SQLiteGdxException;
 
 /** @author cycloneqi */
-public class PreparedStatement implements com.badlogic.gdx.sql.PreparedStatement {
+public class PreparedStatement implements com.badlogic.gdx.sqlite.PreparedStatement {
 	private java.sql.PreparedStatement statement;
 
 	public PreparedStatement (java.sql.PreparedStatement preparedStatement) {

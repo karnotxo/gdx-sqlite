@@ -1,5 +1,5 @@
 
-package com.badlogic.gdx.sql;
+package com.badlogic.gdx.sqlite;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
 

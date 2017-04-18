@@ -11,16 +11,15 @@ import java.sql.Blob;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteStatement;
 
-import com.badlogic.gdx.sql.Database;
-import com.badlogic.gdx.sql.DatabaseCursor;
+import com.badlogic.gdx.sqlite.Database;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
 
 /** @author cycloneqi */
-public class PreparedStatement implements com.badlogic.gdx.sql.PreparedStatement {
+public class PreparedStatement implements com.badlogic.gdx.sqlite.PreparedStatement {
 	private static final int BUFFER_SIZE = 1024;
 
 	private Database database;

@@ -2,16 +2,15 @@ package com.badlogic.gdx.sqlite.robovm;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import SQLite.JDBCDriver;
 
-import com.badlogic.gdx.sql.Database;
-import com.badlogic.gdx.sql.DatabaseCursor;
-import com.badlogic.gdx.sql.SQLiteGdxException;
+import com.badlogic.gdx.sqlite.Database;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
+import com.badlogic.gdx.sqlite.SQLiteGdxException;
 
 /**
  * 
@@ -136,7 +135,7 @@ public class RobovmDatabase implements Database {
 	}
 
 	@Override
-	public com.badlogic.gdx.sql.PreparedStatement getPreparedStatement(String query) throws SQLiteGdxException {
+	public com.badlogic.gdx.sqlite.PreparedStatement getPreparedStatement(String query) throws SQLiteGdxException {
 		// TODO Auto-generated method stub
 		return null;
 	}

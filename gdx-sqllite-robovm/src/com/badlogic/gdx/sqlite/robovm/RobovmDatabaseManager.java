@@ -1,7 +1,7 @@
 package com.badlogic.gdx.sqlite.robovm;
 
-import com.badlogic.gdx.sql.Database;
-import com.badlogic.gdx.sql.DatabaseManager;
+import com.badlogic.gdx.sqlite.Database;
+import com.badlogic.gdx.sqlite.DatabaseManager;
 
 
 /**

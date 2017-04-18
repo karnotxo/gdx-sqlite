@@ -1,5 +1,5 @@
 
-package com.badlogic.gdx.sql;
+package com.badlogic.gdx.sqlite;
 
 /** Checked Exception for SQLite used in this extension.
  * 

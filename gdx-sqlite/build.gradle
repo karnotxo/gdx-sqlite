@@ -1,4 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.badlogic.gdx.sqlite'
+version = '0.1'
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"

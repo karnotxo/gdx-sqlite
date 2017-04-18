@@ -5,9 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.sql.DatabaseCursor;
-import com.badlogic.gdx.sql.DatabaseFactory;
-import com.badlogic.gdx.sql.SQLiteGdxRuntimeException;
+import com.badlogic.gdx.sqlite.DatabaseCursor;
+import com.badlogic.gdx.sqlite.DatabaseFactory;
+import com.badlogic.gdx.sqlite.SQLiteGdxRuntimeException;
 
 /** @author M Rafay Aleem */
 public class AndroidCursor implements DatabaseCursor {

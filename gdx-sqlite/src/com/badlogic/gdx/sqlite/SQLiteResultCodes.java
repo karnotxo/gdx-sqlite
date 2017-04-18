@@ -1,5 +1,5 @@
 
-package com.badlogic.gdx.sql;
+package com.badlogic.gdx.sqlite;
 
 /** Result codes taken from http://www.sqlite.org/c3ref/c_abort.html
  * 
