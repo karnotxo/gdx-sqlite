@@ -105,6 +105,11 @@ public class RobovmCursor implements DatabaseCursor {
 		}
 	}
 
+	@Override
+	public void reposition(int columnIndex) {
+		throw new RuntimeException("not implemented yet"); // TODO : implement ios reposition
+	}
+
 	public void setNativeCursor(ResultSet resultSet) {
 		this.nativeCursor = resultSet;
 	}

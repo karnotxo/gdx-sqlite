@@ -1,0 +1,9 @@
+include ':gdx-sqlite'
+include ':gdx-sqlite-desktop'
+include ':gdx-sqllite-robovm'
+include ':gdx-sqlite-android'
+
+include ':DatabaseTest'
+include ':DatabaseTest-android'
+include ':DatabaseTest-desktop'
+include ':DatabaseTest-RoboVM'

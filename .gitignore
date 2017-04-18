@@ -1,4 +1,54 @@
+## Java
+
 *.class
+*.war
+*.ear
+hs_err_pid*
 
+## Robovm
+robovm-build/
+
+## Android Studio and Intellij and Android in general
+projectFilesBackup/
 .idea/
+*.ipr
+*.iws
+*.iml
+out/
+/build/
 
+## Eclipse
+.classpath
+.project
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+
+## NetBeans
+**/nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+## Gradle
+.gradle
+gradle-app.setting
+gradle.properties
+
+## OS Specific
+.DS_Store
+Thumbs.db
+*.apk
+.~lock.*#
