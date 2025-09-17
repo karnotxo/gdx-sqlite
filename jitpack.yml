@@ -1,0 +1,7 @@
+jdk:
+  - openjdk17
+
+install:
+  - mvn -q -DskipTests install
+
+# Ensures JitPack picks Maven even though legacy Gradle files remain.

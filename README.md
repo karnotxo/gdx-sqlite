@@ -1,4 +1,5 @@
-# gdx-sqlite
+# gdx-sqlite  
+![CI](https://github.com/karnotxo/gdx-sqlite/actions/workflows/ci.yml/badge.svg)
 
 This is a fork of https://github.com/mrafayaleem/gdx-sqlite project.
 
@@ -128,3 +129,111 @@ Please email any bugs or feature requests at: mrafayaleem at gmail.com
 
 ## Author:
 Mohammad Rafay Aleem
+
+---
+
+## Maven / JitPack Usage (Modernized Build)
+
+The project now provides a Maven multi-module build (core, desktop, robovm) to allow consumption through JitPack. The historical instructions above (manual JAR copying, Ant build) are retained for legacy reference.
+
+Android support currently still uses the original Gradle setup and is not yet migrated to Maven (future work: evaluate android-maven-plugin, or keep Gradle for Android only).
+
+### 1. Add JitPack repository
+
+Maven:
+```xml
+<repositories>
+	<repository>
+		<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
+	</repository>
+</repositories>
+```
+
+Gradle (Kotlin DSL):
+```kotlin
+repositories { maven("https://jitpack.io") }
+```
+
+### 2. Add Dependencies
+
+Choose a released git tag (recommended) or a commit hash you trust after the Maven conversion is merged.
+
+Maven:
+```xml
+<dependency>
+	<groupId>com.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite-core</artifactId>
+	<version>TAG_OR_COMMIT</version>
+</dependency>
+<dependency>
+	<groupId>com.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite-desktop</artifactId>
+	<version>TAG_OR_COMMIT</version>
+</dependency>
+<dependency>
+	<groupId>com.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite-robovm</artifactId>
+	<version>TAG_OR_COMMIT</version>
+</dependency>
+```
+
+Gradle (Kotlin DSL):
+```kotlin
+dependencies {
+		implementation("com.github.karnotxo:gdx-sqlite-core:TAG_OR_COMMIT")
+		implementation("com.github.karnotxo:gdx-sqlite-desktop:TAG_OR_COMMIT") // desktop (sqlite-jdbc)
+		implementation("com.github.karnotxo:gdx-sqlite-robovm:TAG_OR_COMMIT")  // iOS (RoboVM)
+}
+```
+
+### 3. Modules Overview
+
+| Module | Purpose |
+|--------|---------|
+| gdx-sqlite-core | Platform-neutral API & shared code |
+| gdx-sqlite-desktop | Desktop implementation via sqlite-jdbc |
+| gdx-sqlite-robovm | iOS RoboVM implementation |
+| gdx-sqlite-android (Gradle) | Android implementation (pending migration) |
+
+### 4. Local Build
+
+Run:
+```bash
+mvn -q -DskipTests install
+```
+JARs install under `~/.m2/repository/com/github/karnotxo/`.
+
+### 4b. Desktop Shaded (Uber) Jar
+
+The desktop module now also produces a shaded artifact bundling `sqlite-jdbc`:
+
+File name pattern: `gdx-sqlite-desktop-<version>-all.jar`
+
+Use this when you want a single jar containing the native loader logic. Example (Gradle project using the shaded jar directly):
+```kotlin
+dependencies {
+		implementation(files("libs/gdx-sqlite-desktop-1.0.0-SNAPSHOT-all.jar"))
+}
+```
+When consuming from Maven/JitPack you can also declare the classifier explicitly if you need the shaded jar (optional):
+```xml
+<dependency>
+	<groupId>com.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite-desktop</artifactId>
+	<version>TAG_OR_COMMIT</version>
+	<classifier>all</classifier>
+</dependency>
+```
+
+### 5. Next Steps
+1. Migrate Android module to Maven (if desirable) or clarify Gradle-only usage section.
+2. Add GitHub Actions workflow for CI (build + perhaps simple runtime smoke test using libGDX headless backend).
+3. Publish a tagged release so JitPack can cache immutable artifacts for consumers.
+
+#### Release Notes
+First Mavenized release: `v1.0.0` (modules: `gdx-sqlite-core`, `gdx-sqlite-desktop` (+ shaded classifier `all`), `gdx-sqlite-robovm`).
+RoboVM module directory spelling corrected from `gdx-sqllite-robovm` to `gdx-sqlite-robovm`.
+
+---
+Legacy build (Ant / manual JAR copy) is considered deprecated in favor of dependency management via Maven/Gradle + JitPack.

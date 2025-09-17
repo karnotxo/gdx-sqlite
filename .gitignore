@@ -1,54 +1,67 @@
-## Java
+############### Build & Artifacts ###############
+target/
+logs/
 
+# Compiled classes
 *.class
+
+# Packaged archives
+*.jar
 *.war
+*.nar
 *.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Dependency reduction (shade, if ever used)
+dependency-reduced-pom.xml
+
+############### Diagnostics / Logs ###############
+*.log
 hs_err_pid*
+replay_pid*
+*.hprof
+*.error
+*.pid
 
-## Robovm
-robovm-build/
-
-## Android Studio and Intellij and Android in general
-projectFilesBackup/
-.idea/
-*.ipr
-*.iws
-*.iml
-out/
-/build/
-
-## Eclipse
-.classpath
+############### IDE / Editors ###############
+# Eclipse
 .project
-.metadata
-**/bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
+.classpath
 .settings/
-.loadpath
-.externalToolBuilders/
-*.launch
+.checkstyle
+.factorypath
+.factoryPath
 
-## NetBeans
-**/nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-nb-configuration.xml
+# IntelliJ / JetBrains
+.idea/
+*.iml
+*.iws
+out/
 
-## Gradle
-.gradle
-gradle-app.setting
-gradle.properties
+# VS Code
+.vscode/
 
-## OS Specific
+############### OS / Misc ###############
 .DS_Store
 Thumbs.db
-*.apk
-.~lock.*#
+
+############### Temp / Backups ###############
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+
+############### Java ME (legacy) ###############
+.mtj.tmp/
+
+############### Tooling (future-proof) ###############
+node_modules/
+.env
+.env.*
+.mvn/wrapper/maven-wrapper.jar
+
+############### BlueJ (rare) ###############
+*.ctxt
