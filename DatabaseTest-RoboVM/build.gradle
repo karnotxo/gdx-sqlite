@@ -1,22 +1,30 @@
-apply plugin: "java"
+plugins {
+    id 'java'
+}
 
 repositories {
-    jcenter()
-    maven { url 'https://maven.fabric.io/public' }
+    google()
+    mavenCentral()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 }
 
 dependencies {
-    compile project(":gdx-sqlite")
-
-    compile "com.mobidevelop.robovm:robovm-rt:$roboVMVersion"
-    compile "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion"
-    compile "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
+    implementation project(":gdx-sqlite")
+    implementation libs.robovm.rt
+    implementation libs.robovm.cocoatouch
+    implementation libs.libgdx.backend.robovm
+    // If iOS natives are needed, add a classifier-based dependency manually; omitted for catalog simplicity.
 }
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
-sourceCompatibility = '1.7'
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main { java.srcDirs = ["src/"] }
+}

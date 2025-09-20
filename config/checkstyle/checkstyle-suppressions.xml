@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Experimental Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+  <!-- Generated Kaitai parser: style violations are ignored -->
+  <suppress files="com/indra/c2/marcc/player/pcap/parser/Pcap.java" checks=".*" />
+  <!-- Internal name suppressions removed after refactor to rootRef/parentRef naming -->
+</suppressions>

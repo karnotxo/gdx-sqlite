@@ -1,3 +1,140 @@
+# gdx-sqlite
+![CI](https://github.com/karnotxo/gdx-sqlite/actions/workflows/ci.yml/badge.svg)
+Modernized fork of https://github.com/mrafayaleem/gdx-sqlite.
+`gdx-sqlite` is a cross‑platform libGDX extension that provides a unified API for SQLite database access. Desktop uses the bundled SQLite JDBC driver; Android uses the platform SQLite API. (Historic RoboVM/iOS backend is present but not actively verified.)
+Supported / maintained backends:
+* Desktop (sqlite-jdbc)
+* Android (platform API)
+* Core (shared API)
+* RoboVM (legacy – build may require environment setup)
+This fork removes legacy Ant and Maven/JitPack setup in favor of a single Gradle build with automated CI & release artifacts.
+## Getting the JARs (CI Artifacts)
+
+On every release, GitHub Actions attaches three ready‑to‑use jars to the release page:
+
+| Jar | Purpose |
+|-----|---------|
+| `gdx-sqlite.jar` | Core API (add to all platforms) |
+| `gdx-sqlite-desktop.jar` | Desktop implementation (requires also `sqlite-jdbc` at runtime – already on classpath through this module) |
+| `gdx-sqlite-android.jar` | Android implementation |
+If you prefer to build locally:
+```bash
+./gradlew prepareReleaseJars
+ls build/release
+```
+Without an Android SDK configured locally only the core & desktop jars are produced (CI builds all three).
+### Integrating into your libGDX project
+
+Gradle (Kotlin DSL example):
+```kotlin
+dependencies {
+	implementation(files("libs/gdx-sqlite.jar"))          // core shared
+	// Desktop project:
+	implementation(files("libs/gdx-sqlite-desktop.jar"))  // includes sqlite-jdbc
+	// Android project:
+	implementation(files("libs/gdx-sqlite-android.jar"))
+}
+
+RoboVM (optional, legacy): add the RoboVM backend classes and ensure you link the implementation class if using tree‑shaking.
+## Changes vs Original
+* Added column-name getters on `DatabaseCursor`.
+* Updated dependencies (libGDX 1.13.5, sqlite-jdbc 3.50.3.0, AndroidX, RoboVM 2.3.23).
+* Removed Ant & Maven builds; single Gradle build.
+* Added CI workflow producing release artifacts.
+* Added sources & javadoc jars for core/desktop/robovm.
+* Modernized Gradle configurations (`implementation`, Java 8 baseline).
+## Building From Source
+Minimum steps:
+```bash
+git clone https://github.com/karnotxo/gdx-sqlite.git
+cd gdx-sqlite
+./gradlew prepareReleaseJars
+```
+Artifacts: `build/release/`.
+Individual module build:
+```bash
+./gradlew :gdx-sqlite:build :gdx-sqlite-desktop:build
+```
+
+Sources & Javadoc jars (automatically attached to `assemble` for Java modules):
+```bash
+./gradlew :gdx-sqlite:sourcesJar :gdx-sqlite:javadocJar
+```
+
+Android jar locally (requires `local.properties` or ANDROID_HOME):
+```bash
+./gradlew :gdx-sqlite-android:androidJar
+```
+
+Release aggregation (skips android if SDK absent):
+```bash
+./gradlew prepareReleaseJars
+```
+Git tagging helpers:
+```bash
+./gradlew createGitTag   # creates v<version> (checks clean tree)
+./gradlew pushGitTag     # pushes that tag
+./gradlew tagRelease     # both steps
+```
+Set the version in root `build.gradle` before tagging.
+## Continuous Integration & Releases
+GitHub Actions workflow (`.github/workflows/ci.yml`) runs on pushes & PRs and publishes jars on release events:
+1. Installs JDK 17 and Android SDK (for release event).
+2. Builds all modules and runs `prepareReleaseJars`.
+3. Uploads `gdx-sqlite.jar`, `gdx-sqlite-desktop.jar`, `gdx-sqlite-android.jar` (if Android SDK) to the GitHub Release.
+## Versioning
+Project version is defined in the root `build.gradle`. Update it, commit, then:
+```bash
+./gradlew tagRelease
+```
+Create a GitHub Release using the generated tag to trigger asset upload.
+
+## Consuming via Maven (Local / Custom Repo)
+
+Local development consumption (after running `publishToMavenLocal`):
+```xml
+<dependency>
+	<groupId>io.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite</artifactId>
+	<version>1.1.0</version>
+</dependency>
+<dependency>
+	<groupId>io.github.karnotxo</groupId>
+	<artifactId>gdx-sqlite-desktop</artifactId>
+	<version>1.1.0</version>
+</dependency>
+```
+Gradle (Kotlin DSL):
+```kotlin
+dependencies {
+		implementation("io.github.karnotxo:gdx-sqlite:1.1.0")
+		implementation("io.github.karnotxo:gdx-sqlite-desktop:1.1.0")
+}
+```
+Android artifact is not published automatically unless Android SDK present; RoboVM publication currently disabled.
+To publish to a custom Maven repo:
+```bash
+./gradlew -PpublishUrl=https://your.repo.url/repository/releases \
+					-PpublishUsername=USER -PpublishPassword=PASS publish
+```
+Signing / Maven Central: not yet wired (next steps would add `signing` plugin & OSSRH credentials).
+## Dependency Versions (current)
+| Component | Version |
+|-----------|---------|
+| libGDX | 1.13.5 |
+| sqlite-jdbc | 3.50.3.0 |
+| RoboVM plugin | 2.3.23 |
+| AndroidX AppCompat | 1.7.0 |
+| Java baseline | 8 |
+## Roadmap / Ideas
+* Optional publication to Maven Central (needs groupId coordination).
+* Kotlin multiplatform wrapper (experimental).
+* Expand test coverage (current samples are manual integration tests).
+* Verify / modernize RoboVM backend or remove if unmaintained.
+## License
+Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html)
+
+Original author: Mohammad Rafay Aleem. Fork improvements © contributors.
 # gdx-sqlite  
 ![CI](https://github.com/karnotxo/gdx-sqlite/actions/workflows/ci.yml/badge.svg)
 
@@ -195,45 +332,28 @@ dependencies {
 | gdx-sqlite-desktop | Desktop implementation via sqlite-jdbc |
 | gdx-sqlite-robovm | iOS RoboVM implementation |
 | gdx-sqlite-android (Gradle) | Android implementation (pending migration) |
+| gdx-sqlite-android (Maven profile) | Experimental Maven AAR (activate with -Pandroid) |
 
-### 4. Local Build
+### Current Build (Gradle Only)
 
-Run:
+Run desktop & core compilation:
 ```bash
-mvn -q -DskipTests install
-```
-JARs install under `~/.m2/repository/com/github/karnotxo/`.
-
-### 4b. Desktop Shaded (Uber) Jar
-
-The desktop module now also produces a shaded artifact bundling `sqlite-jdbc`:
-
-File name pattern: `gdx-sqlite-desktop-<version>-all.jar`
-
-Use this when you want a single jar containing the native loader logic. Example (Gradle project using the shaded jar directly):
-```kotlin
-dependencies {
-		implementation(files("libs/gdx-sqlite-desktop-1.0.0-SNAPSHOT-all.jar"))
-}
-```
-When consuming from Maven/JitPack you can also declare the classifier explicitly if you need the shaded jar (optional):
-```xml
-<dependency>
-	<groupId>com.github.karnotxo</groupId>
-	<artifactId>gdx-sqlite-desktop</artifactId>
-	<version>TAG_OR_COMMIT</version>
-	<classifier>all</classifier>
-</dependency>
+./gradlew :gdx-sqlite-desktop:build
 ```
 
-### 5. Next Steps
-1. Migrate Android module to Maven (if desirable) or clarify Gradle-only usage section.
-2. Add GitHub Actions workflow for CI (build + perhaps simple runtime smoke test using libGDX headless backend).
-3. Publish a tagged release so JitPack can cache immutable artifacts for consumers.
+Android build (may require aligning code to newer SDK / AGP constraints):
+```bash
+./gradlew :gdx-sqlite-android:assembleRelease
+```
 
-#### Release Notes
-First Mavenized release: `v1.0.0` (modules: `gdx-sqlite-core`, `gdx-sqlite-desktop` (+ shaded classifier `all`), `gdx-sqlite-robovm`).
-RoboVM module directory spelling corrected from `gdx-sqllite-robovm` to `gdx-sqlite-robovm`.
+Key versions:
+- libGDX: 1.13.5
+- sqlite-jdbc: 3.50.3.0 (desktop)
+- RoboVM plugin: 2.3.23
+- AndroidX AppCompat: 1.7.0
 
----
+Notes:
+- Source compatibility raised to Java 8 across modules.
+- Repositories migrated from jcenter() to mavenCentral() / google().
+- Maven/JitPack integration removed per project decision; previous release tag history retained in Git.
 Legacy build (Ant / manual JAR copy) is considered deprecated in favor of dependency management via Maven/Gradle + JitPack.

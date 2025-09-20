@@ -1,6 +1,6 @@
 include ':gdx-sqlite'
 include ':gdx-sqlite-desktop'
-include ':gdx-sqllite-robovm'
+include ':gdx-sqlite-robovm'
 include ':gdx-sqlite-android'
 
 include ':DatabaseTest'

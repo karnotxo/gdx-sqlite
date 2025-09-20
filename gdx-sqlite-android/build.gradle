@@ -1,26 +1,24 @@
 apply plugin: "com.android.library"
-apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.badlogic.gdx.sqlite'
-version = '0.1'
+version = rootProject.version
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:appcompat-v7:${appcompat_library_version}"
-
-    compile project(":gdx-sqlite")
-    compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    testImplementation libs.junit4
+    implementation project(":gdx-sqlite")
+    implementation libs.libgdx.backend.android
+    implementation libs.androidx.appcompat
 }
 
 android {
+    namespace 'com.gdxsqlite.android'
     compileSdkVersion android_compile_version
-    buildToolsVersion android_version
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion android_compile_version
         versionCode 1
-        versionName "1.0"
+        versionName project.version
     }
     buildTypes {
         release {
@@ -37,11 +35,20 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
-
-        instrumentTest.setRoot('tests')
     }
-    // TODO : do we really need this?
-    lintOptions {
-        abortOnError false
+    lint {
+        abortOnError = false
+    }
+}
+
+// Task to package the Android library classes into a plain jar (without resources) for release attachments
+afterEvaluate {
+    tasks.register('androidJar', Jar) {
+        group = 'build'
+        description = 'Assembles a jar containing the compiled Android library classes.'
+        from("build/intermediates/javac/release/classes") { include '**/*.class' }
+        archiveBaseName.set("gdx-sqlite-android")
+        archiveVersion.set(project.version as String)
+        dependsOn 'compileReleaseJavaWithJavac'
     }
 }

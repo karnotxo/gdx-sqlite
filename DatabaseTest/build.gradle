@@ -1,15 +1,21 @@
-apply plugin: 'java'
+plugins {
+    id 'java'
+}
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets {
+    main {
+        java.srcDirs = ["src/"]
+    }
+}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-    compile project (':gdx-sqlite')
-
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.libgdx.core
+    implementation project(':gdx-sqlite')
+    testImplementation libs.junit4
 }

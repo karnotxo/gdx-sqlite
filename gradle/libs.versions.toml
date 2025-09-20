@@ -1,0 +1,24 @@
+[versions]
+libgdx = "1.13.5"
+sqliteJdbc = "3.50.3.0"
+robovm = "2.3.23"
+androidGradle = "7.4.2"
+androidxAppcompat = "1.7.0"
+junit4 = "4.13.2"
+lombok = "1.18.34"
+
+[plugins]
+spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
+
+[libraries]
+libgdx-core = { group = "com.badlogicgames.gdx", name = "gdx", version.ref = "libgdx" }
+libgdx-backend-desktop = { group = "com.badlogicgames.gdx", name = "gdx-backend-lwjgl", version.ref = "libgdx" }
+libgdx-backend-android = { group = "com.badlogicgames.gdx", name = "gdx-backend-android", version.ref = "libgdx" }
+libgdx-backend-robovm = { group = "com.badlogicgames.gdx", name = "gdx-backend-robovm", version.ref = "libgdx" }
+libgdx-platform = { group = "com.badlogicgames.gdx", name = "gdx-platform", version.ref = "libgdx" }
+sqlite-jdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqliteJdbc" }
+robovm-rt = { group = "com.mobidevelop.robovm", name = "robovm-rt", version.ref = "robovm" }
+robovm-cocoatouch = { group = "com.mobidevelop.robovm", name = "robovm-cocoatouch", version.ref = "robovm" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }

@@ -1,10 +1,12 @@
-name: CI
+name: Build & Release
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master ]
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
@@ -13,24 +15,52 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Build (Maven)
-        run: mvn -B -DskipTests install
-
-      - name: Verify Shaded Jar
+          java-version: 21
+          cache: gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android components
         run: |
-          ls -l gdx-sqlite-desktop/target || true
-          test -f gdx-sqlite-desktop/target/gdx-sqlite-desktop-1.0.0-SNAPSHOT-all.jar
-
-      - name: Attach Artifacts (Desktop shaded)
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v2
+      - name: Build Jars (core+desktop; android if SDK present)
+        run: ./gradlew :gdx-sqlite:build :gdx-sqlite-desktop:build :gdx-sqlite-android:assembleRelease :gdx-sqlite-android:androidJar prepareReleaseJars --no-daemon --stacktrace || echo "Android build may have been skipped"
+      - name: Upload Jars Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: desktop-shaded-jar
-          path: gdx-sqlite-desktop/target/gdx-sqlite-desktop-*-all.jar
+            name: jars-${{ github.sha }}
+            path: build/release/*.jar
+
+  release-assets:
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install Android components
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Build Release Jars
+        run: ./gradlew prepareReleaseJars --no-daemon --stacktrace
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/release/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

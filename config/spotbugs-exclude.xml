@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude all issues in generated Record builder classes -->
+    <Match>
+        <Class name="~.*Builder$"/>
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION"/>
+    </Match>
+    
+    <!-- Exclude all issues in annotation processor generated code -->
+    <Match>
+        <Source name="~.*generated-sources.*"/>
+    </Match>
+
+    <!-- Exclude all issues in Kaitai generated parser classes -->
+    <Match>
+        <Package name="com.indra.c2.marcc.player.pcap.parser"/>
+    </Match>
+</FindBugsFilter> 

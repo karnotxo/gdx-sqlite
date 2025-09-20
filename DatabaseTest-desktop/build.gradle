@@ -1,12 +1,20 @@
-apply plugin: "java"
+plugins {
+    id 'java'
+}
 
-sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = [ "src/" ]
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+    main { java.srcDirs = ["src/"] }
+}
 
 dependencies {
-    compile project(":DatabaseTest")
-    compile project(":gdx-sqlite-desktop")
-
-    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-    compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation project(":DatabaseTest")
+    implementation project(":gdx-sqlite-desktop")
+    // Use LWJGL 2 backend since Main.java uses LwjglApplication (not Lwjgl3Application)
+    implementation libs.libgdx.backend.desktop
+    implementation "com.badlogicgames.gdx:gdx-platform:${libs.versions.libgdx.get()}:natives-desktop"
 }

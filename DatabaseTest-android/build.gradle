@@ -3,27 +3,22 @@ apply plugin: "com.android.application"
 configurations { natives }
 
 repositories {
-    /** The default repository for Android Studio projects */
-    jcenter()
+    google()
+    mavenCentral()
 }
 
 dependencies {
-    compile project(":DatabaseTest")
-
-    compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+    implementation project(":DatabaseTest")
+    implementation libs.libgdx.backend.android
+    // Keep separate natives configuration for extraction task (use platform artifact coordinates)
+    natives libs.libgdx.platform
 }
 
 android {
     compileSdkVersion android_compile_version
-    buildToolsVersion android_version
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 14
         targetSdkVersion android_compile_version
         versionCode 1
         versionName "1.0.0"
@@ -42,12 +37,13 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
-            aidl.srcDirs = ['aidl']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
     }
+    // AGP 7+ prefers explicit namespace instead of manifest package
+    namespace "com.gdxsqlite.test"
 }
 
 task run(type: Exec) {
@@ -75,25 +71,24 @@ task run(type: Exec) {
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives() {
-    file("libs/armeabi/").mkdirs();
-    file("libs/armeabi-v7a/").mkdirs();
-    file("libs/x86/").mkdirs();
-    file("libs/x86_64/").mkdirs();
-    file("libs/arm64-v8a/").mkdirs();
-
-    configurations.natives.files.each { jar ->
-        def outputDir = null
-        if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-        if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
-        if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-        if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
-        if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
-        if (outputDir != null) {
-            copy {
-                from zipTree(jar)
-                into outputDir
-                include "*.so"
+tasks.register('copyAndroidNatives') {
+    group = 'build'
+    description = 'Extract native .so files from libGDX platform classifier jars into libs/ABI folders.'
+    doLast {
+        ["armeabi-v7a","x86","x86_64","arm64-v8a"].each { abi -> file("libs/${abi}").mkdirs() }
+        configurations.natives.resolvedConfiguration.resolvedArtifacts.each { art ->
+            def name = art.file.name
+            def abi = null
+            if (name.contains('natives-armeabi-v7a')) abi = 'armeabi-v7a'
+            if (name.contains('natives-x86_64')) abi = 'x86_64'
+            if (name.contains('natives-arm64-v8a')) abi = 'arm64-v8a'
+            if (name.matches('.*natives-x86(?!_64).*')) abi = 'x86'
+            if (abi) {
+                copy {
+                    from zipTree(art.file)
+                    into file("libs/${abi}")
+                    include '*.so'
+                }
             }
         }
     }

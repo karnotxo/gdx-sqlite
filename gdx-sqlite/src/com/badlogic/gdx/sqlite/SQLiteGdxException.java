@@ -1,22 +1,22 @@
-
 package com.badlogic.gdx.sqlite;
 
-/** Checked Exception for SQLite used in this extension.
- * 
- * @author M Rafay Aleem */
+/**
+ * Checked Exception for SQLite used in this extension.
+ *
+ * @author M Rafay Aleem
+ */
 public class SQLiteGdxException extends Exception {
-	private static final long serialVersionUID = 123750592122585758L;
+  private static final long serialVersionUID = 123750592122585758L;
 
-	public SQLiteGdxException (String message) {
-		super(message);
-	}
+  public SQLiteGdxException(String message) {
+    super(message);
+  }
 
-	public SQLiteGdxException (Throwable t) {
-		super(t);
-	}
+  public SQLiteGdxException(Throwable t) {
+    super(t);
+  }
 
-	public SQLiteGdxException (String message, Throwable t) {
-		super(message, t);
-	}
-
+  public SQLiteGdxException(String message, Throwable t) {
+    super(message, t);
+  }
 }
