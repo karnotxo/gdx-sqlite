@@ -200,8 +200,10 @@ tasks.register('createGitTag') {
     doLast {
         def ver = project.version
         def tag = "v${ver}"
-        def status = "git status --porcelain".execute().text.trim()
-        if (!status.isEmpty()) throw new GradleException('Working tree not clean; commit or stash changes before tagging.')
+        def proc = new ProcessBuilder(['git','status','--porcelain']).redirectErrorStream(true).directory(project.rootDir).start()
+        def status = proc.inputStream.getText('UTF-8').trim()
+        println "[createGitTag] git status --porcelain -> '${status}'"
+        if (!status.isEmpty()) throw new GradleException('Working tree not clean; commit or stash changes before tagging. Output: '+status)
         def existing = "git tag --list ${tag}".execute().text.trim()
         if (!existing.isEmpty()) throw new GradleException("Tag ${tag} already exists.")
         println "Creating tag ${tag}"
