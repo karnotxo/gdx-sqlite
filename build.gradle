@@ -1,34 +1,252 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
+        google()
+        mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
-    // these dependencies are for build process only (not for actual code)
     dependencies {
-        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.android.tools.build:gradle:8.13.0'
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.23'
     }
+}
+
+plugins {
+    id 'com.diffplug.spotless' version '6.25.0'
+    id 'checkstyle'
 }
 
 allprojects {
     apply plugin: "idea"
 
-    version = '1.0'
+    version = '1.0.1'
     ext {
-        gdxVersion = '1.13.5'
-        roboVMVersion = '2.3.0'
-        // Set defaults for android
-        android_compile_version = 25
-        android_version = '25.0.1'
-        appcompat_library_version = '25.0.1'
-        support_library_version = '25.0.1'
+        // Modern Android compile/target (kept outside catalog as it's a build tool param)
+    android_compile_version = 35
+    android_version = '35.0.0'
     }
 
     repositories {
-        jcenter()
-        maven { url 'https://maven.fabric.io/public' }
+        google()
+        mavenCentral()
+    }
+
+    // Standardize encoding & Java 8 targets (use host JDK; avoid toolchain requirement locally)
+    plugins.withType(JavaPlugin).configureEach {
+        tasks.withType(JavaCompile).configureEach {
+            sourceCompatibility = '1.8'
+            targetCompatibility = '1.8'
+            options.encoding = 'UTF-8'
+            options.compilerArgs += [
+                '-parameters'
+            ]
+        }
+        tasks.withType(Javadoc).configureEach {
+            // Suppress strict doclint errors due to legacy incomplete Javadoc
+            options.addBooleanOption('Xdoclint:none', true)
+            failOnError = false
+        }
+    }
+
+    // Configure Lombok & Checkstyle for all Java subprojects.
+    subprojects { sp ->
+        // Skip sample/demo projects from enforced quality configuration
+        if (sp.name.startsWith('DatabaseTest')) return
+        sp.plugins.withType(JavaPlugin) {
+            sp.apply plugin: 'checkstyle'
+            sp.dependencies {
+                compileOnly libs.lombok
+                annotationProcessor libs.lombok
+                testCompileOnly libs.lombok
+                testAnnotationProcessor libs.lombok
+            }
+            sp.checkstyle {
+                toolVersion = '10.18.1'
+                configDirectory = rootProject.file('config/checkstyle')
+                configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+                ignoreFailures = true
+            }
+        }
+    }
+}
+
+// Aggregate release jars (core, desktop, android) into build/release for attaching to GitHub releases
+tasks.register('prepareReleaseJars') {
+    group = 'distribution'
+    description = 'Collects the core, desktop and (if SDK present) android jars into build/release/'
+    def outDir = layout.buildDirectory.dir('release')
+    outputs.dir(outDir)
+    dependsOn ':gdx-sqlite:jar', ':gdx-sqlite-desktop:jar'
+    def hasAndroidSdk = System.getenv('ANDROID_HOME') || System.getenv('ANDROID_SDK_ROOT') || rootProject.file('local.properties').exists()
+    if (hasAndroidSdk) {
+        dependsOn ':gdx-sqlite-android:androidJar'
+    }
+    doLast {
+        def target = outDir.get().asFile
+        target.mkdirs()
+        copy {
+            from(project(':gdx-sqlite').tasks.named('jar'))
+            into target
+            rename { 'gdx-sqlite.jar' }
+        }
+        copy {
+            from(project(':gdx-sqlite-desktop').tasks.named('jar'))
+            into target
+            rename { 'gdx-sqlite-desktop.jar' }
+        }
+        if (hasAndroidSdk) {
+            copy {
+                from(project(':gdx-sqlite-android').tasks.named('androidJar'))
+                into target
+                rename { 'gdx-sqlite-android.jar' }
+            }
+        } else {
+            logger.lifecycle('Android SDK not detected; skipping android jar')
+        }
+        logger.lifecycle("Release jars prepared in ${target}")
+    }
+}
+
+// Remove legacy Maven-era target directories (invoke manually when cleaning up repository)
+tasks.register('cleanLegacyTargets') {
+    group = 'build'
+    description = 'Deletes legacy target/ directories from previous Maven/Ant builds.'
+    doLast {
+        fileTree(projectDir) { include '**/target' exclude '.gradle/**' }.visit { f ->
+            if (f.file.name == 'target' && f.file.isDirectory()) {
+                println "Deleting legacy directory: ${f.file}"
+                f.file.deleteDir()
+            }
+        }
+    }
+}
+
+// Provide sources and javadoc jars for plain Java modules
+subprojects { subproj ->
+    plugins.withType(JavaPlugin) {
+        def sourcesJar = tasks.register('sourcesJar', Jar) {
+            archiveClassifier.set('sources')
+            from sourceSets.main.allSource
+        }
+        if (!name.contains('android')) {
+            def javadocJar = tasks.register('javadocJar', Jar) {
+                archiveClassifier.set('javadoc')
+                from tasks.named('javadoc')
+                dependsOn tasks.named('javadoc')
+            }
+            tasks.named('assemble').configure { dependsOn(sourcesJar, javadocJar) }
+        } else {
+            tasks.named('assemble').configure { dependsOn(sourcesJar) }
+        }
+    }
+}
+
+// --- Code Quality: Spotless & (per-subproject) Checkstyle ---
+spotless {
+    // Use google-java-format; allow local jar fallback for determinism
+    java {
+        // Prefer bundled version from config directory if present
+        def googleFormatJar = rootProject.file('config/google-format/google-java-format-1.25.0-all-deps.jar')
+        if (googleFormatJar.exists()) {
+            googleJavaFormat() // still apply standard
+        } else {
+            googleJavaFormat('1.28.0')
+        }
+        // Format core + desktop + android + robovm modules
+        target(
+            'gdx-sqlite/src/**/*.java',
+            'gdx-sqlite-desktop/src/**/*.java',
+            'gdx-sqlite-android/src/**/*.java',
+            'gdx-sqlite-robovm/src/**/*.java'
+        )
+        targetExclude('DatabaseTest*/**')
+        trimTrailingWhitespace()
+        endWithNewline()
+        indentWithSpaces(4)
+    }
+    format 'misc', {
+        target('**/*.gradle','**/.gitignore')
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+tasks.register('codeQuality') { t ->
+    group = 'verification'
+    description = 'Runs Checkstyle analysis for primary Java library modules.'
+    // Explicit dependencies (avoid dynamic configuration complexity)
+    t.dependsOn ':gdx-sqlite:checkstyleMain'
+    t.dependsOn ':gdx-sqlite-desktop:checkstyleMain'
+    if (project.findProject(':gdx-sqlite-robovm')) {
+        // robovm module uses Java plugin
+        t.dependsOn ':gdx-sqlite-robovm:checkstyleMain'
+    }
+}
+
+tasks.register('format') {
+    group = 'formatting'
+    description = 'Applies Spotless formatting (core module only).'
+    dependsOn 'spotlessApply'
+}
+
+// Removed previous Maven publish configuration per request.
+
+// --- Git tagging helpers (local convenience) ---
+ext.isGitRepo = { file('.git').exists() }
+
+tasks.register('createGitTag') {
+    group = 'release'
+    description = 'Creates an annotated git tag v<version> if it does not already exist.'
+    onlyIf { isGitRepo() }
+    doLast {
+        def ver = project.version
+        def tag = "v${ver}"
+        def status = "git status --porcelain".execute().text.trim()
+        if (!status.isEmpty()) throw new GradleException('Working tree not clean; commit or stash changes before tagging.')
+        def existing = "git tag --list ${tag}".execute().text.trim()
+        if (!existing.isEmpty()) throw new GradleException("Tag ${tag} already exists.")
+        println "Creating tag ${tag}"
+        exec { commandLine 'git','tag','-a',tag,'-m',"Release ${tag}" }
+    }
+}
+
+tasks.register('pushGitTag') {
+    group = 'release'
+    description = 'Pushes the git tag for current project.version to origin.'
+    onlyIf { isGitRepo() }
+    doLast {
+        def tag = "v${project.version}"
+        def existing = "git tag --list ${tag}".execute().text.trim()
+        if (existing.isEmpty()) throw new GradleException("Tag ${tag} does not exist. Run createGitTag first.")
+        println "Pushing tag ${tag}"
+        exec { commandLine 'git','push','origin',tag }
+    }
+}
+
+tasks.register('tagRelease') {
+    group = 'release'
+    description = 'Creates and pushes the version tag (combo of createGitTag + pushGitTag).'
+    dependsOn 'createGitTag','pushGitTag'
+}
+
+// Diagnostic: Show Android SDK detection & required platform/build-tools presence
+tasks.register('diagnoseAndroidSdk') {
+    group = 'diagnostics'
+    description = 'Prints detected Android SDK path and checks for required platform & build-tools.'
+    doLast {
+        def sdkDir = System.getenv('ANDROID_HOME') ?: System.getenv('ANDROID_SDK_ROOT') ?: (rootProject.file('local.properties').exists() ? new Properties().with { p -> rootProject.file('local.properties').withInputStream { p.load(it) }; p.getProperty('sdk.dir') } : null)
+        println "Detected SDK path: ${sdkDir ?: 'NONE'}"
+        if (!sdkDir) {
+            println 'No SDK detected. Set ANDROID_HOME / ANDROID_SDK_ROOT or create local.properties with sdk.dir=...'
+            return
+        }
+        def platform = new File(sdkDir, "platforms/android-${android_compile_version}")
+        def buildTools = new File(sdkDir, "build-tools/${android_version}")
+        println "Expecting platform directory: ${platform} -> ${platform.exists() ? 'FOUND' : 'MISSING'}"
+        println "Expecting build-tools directory: ${buildTools} -> ${buildTools.exists() ? 'FOUND' : 'MISSING'}"
+        if (!platform.exists() || !buildTools.exists()) {
+            println "One or more required components missing. Install via:\n  sdkmanager \"platforms;android-${android_compile_version}\" \"build-tools;${android_version}\""
+        } else {
+            println 'Android SDK appears complete for current configuration.'
+        }
     }
 }
