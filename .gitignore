@@ -2,6 +2,10 @@
 target/
 logs/
 
+# Gradle & build outputs (added for cleanliness)
+build/
+.gradle/
+
 # Compiled classes
 *.class
 
