@@ -4,4 +4,4 @@ jdk:
 install:
   - ./gradlew clean build -x test
 
-# Use Gradle for building
+# Use Gradle for building (updated for JitPack)
