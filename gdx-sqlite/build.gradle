@@ -16,7 +16,6 @@ sourceSets {
 
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
     api libs.libgdx.core
     testImplementation libs.junit4
 }
