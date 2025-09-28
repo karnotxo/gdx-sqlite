@@ -5,6 +5,7 @@ logs/
 # Gradle & build outputs (added for cleanliness)
 build/
 .gradle/
+.gradle/gradle.properties
 
 # Compiled classes
 *.class
@@ -57,6 +58,7 @@ Thumbs.db
 *~
 *.orig
 *.rej
+*.tmp
 
 ############### Java ME (legacy) ###############
 .mtj.tmp/
@@ -65,7 +67,7 @@ Thumbs.db
 node_modules/
 .env
 .env.*
-.mvn/wrapper/maven-wrapper.jar
+gradle/wrapper/gradle-wrapper.jar
 
 ############### BlueJ (rare) ###############
 *.ctxt

@@ -1,2 +1,69 @@
-/bin
-/build
+############### Build & Artifacts ###############
+target/
+bin/
+build/
+logs/
+
+# Compiled classes
+*.class
+
+# Packaged archives
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Dependency reduction (shade, if ever used)
+dependency-reduced-pom.xml
+
+############### Diagnostics / Logs ###############
+*.log
+hs_err_pid*
+replay_pid*
+*.hprof
+*.error
+*.pid
+
+############### IDE / Editors ###############
+# Eclipse
+.project
+.classpath
+.settings/
+.checkstyle
+.factorypath
+.factoryPath
+
+# IntelliJ / JetBrains
+.idea/
+*.iml
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+############### OS / Misc ###############
+.DS_Store
+Thumbs.db
+
+############### Temp / Backups ###############
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+
+############### Java ME (legacy) ###############
+.mtj.tmp/
+
+############### Tooling (future-proof) ###############
+node_modules/
+.env
+.env.*
+.mvn/wrapper/maven-wrapper.jar
+
+############### BlueJ (rare) ###############
+*.ctxt
