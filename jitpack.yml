@@ -2,6 +2,6 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew clean build -x test
+  - ./gradlew clean :gdx-sqlite:build :gdx-sqlite-desktop:build :gdx-sqlite-android:build :gdx-sqlite-robovm:build -x test
 
 # Use Gradle for building (updated for JitPack)
