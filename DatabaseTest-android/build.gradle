@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     implementation project(":DatabaseTest")
+    implementation libs.libgdx.core
     implementation libs.libgdx.backend.android
     // Keep separate natives configuration for extraction task (use platform artifact coordinates)
     natives libs.libgdx.platform
