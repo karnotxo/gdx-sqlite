@@ -51,4 +51,17 @@ afterEvaluate {
         archiveVersion.set(project.version as String)
         dependsOn 'compileReleaseJavaWithJavac'
     }
+
+    // Copy AAR to build/libs for JitPack compatibility
+    tasks.register('copyAarForJitPack', Copy) {
+        group = 'build'
+        description = 'Copies the release AAR to build/libs for JitPack to find it.'
+        from 'build/outputs/aar'
+        into 'build/libs'
+        include '*-release.aar'
+        rename { String fileName ->
+            fileName.replace('-release', '')
+        }
+        dependsOn 'assembleRelease'
+    }
 }
