@@ -12,6 +12,6 @@ sourceSets { main { java.srcDirs = ["src/"] } }
 
 dependencies {
     implementation project(":gdx-sqlite")
-    implementation libs.libgdx.core
-    implementation libs.sqlite.jdbc
+    implementation libs.libgdxCore
+    implementation libs.sqliteJdbc
 }

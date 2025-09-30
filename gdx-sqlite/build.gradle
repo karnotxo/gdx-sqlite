@@ -16,6 +16,6 @@ sourceSets {
 
 
 dependencies {
-    api libs.libgdx.core
+    api libs.libgdxCore
     testImplementation libs.junit4
 }

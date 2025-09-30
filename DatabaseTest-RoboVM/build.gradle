@@ -10,9 +10,9 @@ repositories {
 
 dependencies {
     implementation project(":gdx-sqlite")
-    implementation libs.robovm.rt
-    implementation libs.robovm.cocoatouch
-    implementation libs.libgdx.backend.robovm
+    implementation libs.robovmRt
+    implementation libs.robovmCocoatouch
+    implementation libs.libgdxBackendRobovm
     // If iOS natives are needed, add a classifier-based dependency manually; omitted for catalog simplicity.
 }
 

@@ -16,7 +16,7 @@ dependencies {
 }
 
 android {
-    compileSdkVersion android_compile_version
+    compileSdk android_compile_version
 
     defaultConfig {
         minSdkVersion 21

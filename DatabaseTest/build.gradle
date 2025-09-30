@@ -15,7 +15,7 @@ sourceSets {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libs.libgdx.core
+    implementation libs.libgdxCore
     implementation project(':gdx-sqlite')
     testImplementation libs.junit4
 }

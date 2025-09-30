@@ -6,13 +6,13 @@ version = rootProject.version
 dependencies {
     testImplementation libs.junit4
     implementation project(":gdx-sqlite")
-    implementation libs.libgdx.backend.android
-    implementation libs.androidx.appcompat
+    implementation libs.libgdxBackendAndroid
+    implementation libs.androidxAppcompat
 }
 
 android {
     namespace 'com.gdxsqlite.android'
-    compileSdkVersion android_compile_version
+    compileSdk android_compile_version
 
     defaultConfig {
         minSdkVersion 14

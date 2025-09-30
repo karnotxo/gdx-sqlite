@@ -15,6 +15,6 @@ dependencies {
     implementation project(":DatabaseTest")
     implementation project(":gdx-sqlite-desktop")
     // Use LWJGL 2 backend since Main.java uses LwjglApplication (not Lwjgl3Application)
-    implementation libs.libgdx.backend.desktop
+    implementation libs.libgdxBackendDesktop
     implementation "com.badlogicgames.gdx:gdx-platform:${libs.versions.libgdx.get()}:natives-desktop"
 }
