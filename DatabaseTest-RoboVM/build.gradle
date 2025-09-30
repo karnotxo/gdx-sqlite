@@ -1,6 +1,4 @@
-plugins {
-    id 'java'
-}
+apply plugin: "robovm"
 
 repositories {
     google()
@@ -9,22 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(":gdx-sqlite")
-    implementation libs.robovmRt
-    implementation libs.robovmCocoatouch
-    implementation libs.libgdxBackendRobovm
-    // If iOS natives are needed, add a classifier-based dependency manually; omitted for catalog simplicity.
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-
-sourceSets {
-    main { java.srcDirs = ["src/"] }
+    'com.badlogicgames.gdx:gdx-backend-robovm:1.13.5'
+    'com.mobidevelop.robovm:robovm-rt:2.3.23'
+    'com.mobidevelop.robovm:robovm-cocoatouch:2.3.23'
 }
