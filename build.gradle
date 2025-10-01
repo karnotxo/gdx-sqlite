@@ -18,7 +18,7 @@ plugins {
 allprojects {
     apply plugin: "idea"
 
-    version = '1.0.1'
+    version = '1.0.0'
     ext {
         // Modern Android compile/target (kept outside catalog as it's a build tool param)
     android_compile_version = 35
