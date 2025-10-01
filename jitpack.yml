@@ -2,4 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew clean :gdx-sqlite:build :gdx-sqlite-desktop:build :gdx-sqlite-android:copyAarForJitPack :gdx-sqlite-android:build -x test
+  - ./gradlew clean :gdx-sqlite:build :gdx-sqlite-desktop:build :gdx-sqlite-android:build :gdx-sqlite-android:copyAarForJitPack -x test
