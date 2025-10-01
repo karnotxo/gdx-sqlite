@@ -1,4 +1,7 @@
-plugins { id 'java' }
+plugins { 
+    id 'java'
+    id 'maven-publish'
+}
 
 group = 'com.badlogic.gdx.sqlite'
 version = rootProject.version
@@ -14,4 +17,12 @@ dependencies {
     implementation project(":gdx-sqlite")
     implementation libs.libgdxCore
     implementation libs.sqliteJdbc
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }

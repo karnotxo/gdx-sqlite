@@ -1,4 +1,7 @@
-apply plugin: "com.android.library"
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
 
 group = 'com.badlogic.gdx.sqlite'
 version = rootProject.version
@@ -63,5 +66,21 @@ afterEvaluate {
             fileName.replace('-release', '')
         }
         dependsOn 'assembleRelease'
+    }
+
+    // Configure Maven publishing for JitPack
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'com.badlogic.gdx.sqlite'
+                artifactId = 'gdx-sqlite-android'
+                version = project.version
+                
+                // Publish the release AAR
+                artifact("$buildDir/outputs/aar/${project.name}-release.aar") {
+                    builtBy tasks.named('bundleReleaseAar')
+                }
+            }
+        }
     }
 }

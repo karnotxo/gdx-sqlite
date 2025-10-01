@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
 group = 'com.badlogic.gdx.sqlite'
@@ -18,4 +19,12 @@ sourceSets {
 dependencies {
     api libs.libgdxCore
     testImplementation libs.junit4
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
